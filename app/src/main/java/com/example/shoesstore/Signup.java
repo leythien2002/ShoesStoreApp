@@ -67,7 +67,7 @@ public class Signup extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
-                                Intent i=new Intent(Signup.this,Signin.class);
+                                Intent i=new Intent(Signup.this,HomePage.class);
                                 startActivity(i);
                                 finishAffinity();//dong tat ca activity bao gom(signup va man hinh signin o phia truoc)
                             } else {
