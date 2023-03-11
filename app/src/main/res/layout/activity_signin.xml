@@ -55,6 +55,7 @@
             tools:layout_editor_absoluteX="179dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"/>
@@ -77,6 +78,7 @@
             tools:layout_editor_absoluteX="179dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
@@ -84,6 +86,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:id="@+id/btnForgetPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -93,7 +96,7 @@
             android:textColor="@color/black" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/btnSignIn"
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
