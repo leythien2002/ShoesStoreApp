@@ -53,29 +53,13 @@ public class SettingUserProfile extends AppCompatActivity {
         imgAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onClickRequestPermission();
+
 
             }
         });
     }
 
-    private void onClickRequestPermission() {
 
-
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
-            openGallery();
-            return;
-        }
-
-        if(SettingUserProfile.this.checkSelfPermission(Manifest.permission.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION)
-        ==PackageManager.PERMISSION_GRANTED){
-            openGallery();
-        }
-        else{
-            String [] permissions={Manifest.permission.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION};
-            SettingUserProfile.this.requestPermissions(permissions,MY_REQUEST_CODE);
-        }
-    }
 
     private void openGallery() {
     }

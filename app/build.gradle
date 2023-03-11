@@ -47,4 +47,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.15.0'
     //circle view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    //bottom nav
+
+    implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
 }
