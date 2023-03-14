@@ -75,7 +75,7 @@ public class Signin extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             progressDialog.dismiss();
                             // Sign in success, update UI with the signed-in user's information
-                            Intent i=new Intent(Signin.this,HomePage.class);
+                            Intent i=new Intent(Signin.this,MenuSelection.class);
                             startActivity(i);
                             finishAffinity();
 

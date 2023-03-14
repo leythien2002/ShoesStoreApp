@@ -1,14 +1,27 @@
 package com.example.shoesstore;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.TextView;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.shoesstore.adapter.MyViewPagerAdapter;
+import com.example.shoesstore.fragment.UserProfile;
 import com.example.shoesstore.tranformer.ZoomOutTransformer;
+
+import java.io.IOException;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -20,9 +33,14 @@ public class MenuSelection extends AppCompatActivity {
     private final int ID_NOTIFICATION=3;
     private final int ID_ACCOUNT=4;
 
+    public static final int MY_REQUEST_CODE=10;
     private ViewPager2 viewPager2;
 
     private MeowBottomNavigation bottomNavigation;
+
+    //test fragment
+    final private UserProfile userProfile=new UserProfile();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,4 +122,15 @@ public class MenuSelection extends AppCompatActivity {
             }
         });
     }
+
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if(requestCode==MY_REQUEST_CODE){
+//            if(grantResults.length>0&&grantResults[0]== PackageManager.PERMISSION_GRANTED){
+//                openGallery();
+//            }
+//        }
+//    }
 }

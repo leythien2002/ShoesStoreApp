@@ -48,6 +48,7 @@ dependencies {
     //circle view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     //bottom nav
-
     implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
+    //imagePicker
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 }
