@@ -4,6 +4,7 @@ import static com.example.shoesstore.MenuSelection.MY_REQUEST_CODE;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -55,8 +56,7 @@ public class UserProfile extends Fragment {
     private EditText edUserName,edEmail;
     private Button btnUpdateUserProfile;
     private Uri seletedImage;
-//    private FragmentManager fm= getActivity().getSupportFragmentManager();
-//    private Home home = (Home)fm.findFragmentById(R.layout.fragment_home);
+
 
     private ActivityResultLauncher<Intent> mActivityResult=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -95,6 +95,7 @@ public class UserProfile extends Fragment {
         edUserName=mView.findViewById(R.id.edUserName);
         edEmail=mView.findViewById(R.id.edEmail);
         btnUpdateUserProfile=mView.findViewById(R.id.btnUpdateProfile);
+
     }
     private void initListener() {
         imgAvatar.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +143,10 @@ public class UserProfile extends Fragment {
                         if (task.isSuccessful()) {
                             Toast.makeText(getActivity(), "Update Profile Success.",
                                     Toast.LENGTH_SHORT).show();
-//                            home.showUserInformation();
-
+//                           //update fragment home( su dung FragmentResultListener)
+                            Bundle result = new Bundle();
+                            result.putString("bundleKey", "result");
+                            getParentFragmentManager().setFragmentResult("requestKey", result);
                         }
                     }
                 });

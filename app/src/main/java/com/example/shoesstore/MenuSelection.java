@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.shoesstore.adapter.MyViewPagerAdapter;
+import com.example.shoesstore.fragment.Home;
 import com.example.shoesstore.fragment.UserProfile;
 import com.example.shoesstore.tranformer.ZoomOutTransformer;
 
@@ -122,6 +123,8 @@ public class MenuSelection extends AppCompatActivity {
             }
         });
     }
+
+
 
 
 //    @Override

@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +42,24 @@ public class Home extends Fragment {
         initUI();
         showUserInformation();
         initListener();
+
         return mView;
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getParentFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                // We use a String here, but any type that can be put in a Bundle is supported
+
+                showUserInformation();
+                // Do something with the result
+            }
+        });
+    }
+
     private void initListener() {
         btnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
