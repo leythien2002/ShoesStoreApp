@@ -24,6 +24,7 @@ allprojects {
         google()  // Google's Maven repository
         mavenCentral()  // Maven Central repository
         jcenter()
+        maven { url "https://jitpack.io" } //for pickup Image
 
     }
 }

@@ -50,7 +50,7 @@ public class HomePage extends AppCompatActivity {
         tvEmail=findViewById(R.id.tvEmail);
         btnSignOut=findViewById(R.id.btnSignOut);
     }
-    private void showUserInformation(){
+    public void showUserInformation(){
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
         if(user==null){
             return;

@@ -33,7 +33,7 @@ public class SplashScreen extends AppCompatActivity {
         }
         else{
             //already logged in
-            Intent i=new Intent(SplashScreen.this,HomePage.class);
+            Intent i=new Intent(SplashScreen.this,MenuSelection.class);
             startActivity(i);
         }
         finish();
