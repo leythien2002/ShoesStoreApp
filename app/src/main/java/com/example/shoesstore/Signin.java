@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class Signin extends AppCompatActivity {
     private TextView tvSignUp;
     private EditText edUserName,edPassword;
     private Button btnSignIn;
+    private LinearLayout layoutForgotPass;
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class Signin extends AppCompatActivity {
         edUserName=findViewById(R.id.edEmail);
         edPassword=findViewById(R.id.edPassword);
         btnSignIn=findViewById(R.id.btnSignIn);
+        layoutForgotPass=findViewById(R.id.layout_forgot_password);
     }
     private void initListener() {
         tvSignUp.setOnClickListener(new View.OnClickListener() {
@@ -54,9 +57,36 @@ public class Signin extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 onClickSignIn();
             }
         });
+        layoutForgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickForgotPass();
+            }
+        });
+    }
+
+    private void onClickForgotPass() {
+        progressDialog.show();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        //should create a layout for users input email
+        String emailAddress = "destiny@gmail.com";
+        //Hien tai dang bi loi khong nhan dc mail (do firebase chang ?)
+        //fix sau :v
+        auth.sendPasswordResetEmail(emailAddress)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(Signin.this,"Success",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
     }
 
     private void onClickSignIn() {
