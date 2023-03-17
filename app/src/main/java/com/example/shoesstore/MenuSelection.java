@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
@@ -48,6 +49,9 @@ public class MenuSelection extends AppCompatActivity {
         setContentView(R.layout.activity_menu_selection);
         viewPager2=findViewById(R.id.view_pager2);
         bottomNavigation=findViewById(R.id.bottomNav);
+        //push view up when keyboard appears
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         initNavBar();
         initUI();
 
