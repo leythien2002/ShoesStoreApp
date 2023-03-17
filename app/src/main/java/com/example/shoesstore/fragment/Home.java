@@ -51,7 +51,6 @@ public class Home extends Fragment {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 // We use a String here, but any type that can be put in a Bundle is supported
-
                 showUserInformation();
                 // Do something with the result
             }

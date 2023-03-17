@@ -68,7 +68,6 @@ public class UserProfile extends Fragment {
         // Inflate the layout for this fragment
         mView=inflater.inflate(R.layout.fragment_user_profile,container,false);
         initUI();
-
         setUserInformation();
         initListener();
 
@@ -117,6 +116,12 @@ public class UserProfile extends Fragment {
             return;
         }
         dialog.show();
+        //dieu chinh lai phan nay de hop ly khi nguoi dung chi click update ma khong
+        //them bat cu thong tin gi
+        if(seletedImage==null){
+            Uri photoUrl = user.getPhotoUrl();
+            seletedImage=photoUrl;
+        }
         String strUserName=edUserName.getText().toString().trim();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(strUserName)
