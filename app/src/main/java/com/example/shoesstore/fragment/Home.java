@@ -7,7 +7,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.viewpager2.widget.ViewPager2;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +20,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.shoesstore.R;
 import com.example.shoesstore.Signin;
+import com.example.shoesstore.adapter.ImageSlideHomeAdapter;
+import com.example.shoesstore.models.Photo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import me.relex.circleindicator.CircleIndicator3;
 
 public class Home extends Fragment {
 
@@ -27,7 +36,23 @@ public class Home extends Fragment {
     private ImageView imgAvatar;
     private TextView tvUserName, tvEmail;
     private Button btnSignOut;
-    public static final int MY_REQUEST_CODE=10;
+    //Home
+    private ViewPager2 mViewPager2;
+    private CircleIndicator3 mCircleIndicator3;
+    private List<Photo> mListPhoto;
+    private Handler mHandler=new Handler();
+    private Runnable mRunnable=new Runnable() {
+        @Override
+        public void run() {
+            if(mViewPager2.getCurrentItem()==mListPhoto.size()-1){
+                mViewPager2.setCurrentItem(0);
+            }
+            else{
+                mViewPager2.setCurrentItem(mViewPager2.getCurrentItem()+1);
+            }
+        }
+    };
+
 
     public Home(){
 
@@ -40,6 +65,7 @@ public class Home extends Fragment {
         initUI();
         showUserInformation();
         initListener();
+        controlImageSlide();
 
         return mView;
     }
@@ -55,6 +81,14 @@ public class Home extends Fragment {
                 // Do something with the result
             }
         });
+        //Store position for resume
+        mHandler.removeCallbacks(mRunnable);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHandler.postDelayed(mRunnable,2000);
     }
 
     private void initListener() {
@@ -67,6 +101,7 @@ public class Home extends Fragment {
 
             }
         });
+
     }
 
     private void initUI() {
@@ -74,6 +109,44 @@ public class Home extends Fragment {
         tvUserName=mView.findViewById(R.id.tvUserName);
         tvEmail=mView.findViewById(R.id.tvEmail);
         btnSignOut=mView.findViewById(R.id.btnSignOut);
+        //slideNewImages
+        mViewPager2=mView.findViewById(R.id.view_pager2);
+        mCircleIndicator3=mView.findViewById(R.id.circle_indicator3);
+        mListPhoto=getListPhoto();
+        ImageSlideHomeAdapter adapter=new ImageSlideHomeAdapter(mListPhoto);
+        mViewPager2.setAdapter(adapter);
+        mCircleIndicator3.setViewPager(mViewPager2);
+
+    }
+
+    private void controlImageSlide(){
+        //control image Slider
+        mHandler.postDelayed(mRunnable,2000);
+        mViewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                mHandler.removeCallbacks(mRunnable);
+                mHandler.postDelayed(mRunnable,2000);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+            }
+        });
+    }
+    private List<Photo> getListPhoto(){
+        List<Photo> list =new ArrayList<>();
+        list.add(new Photo(R.drawable.discount1));
+        list.add(new Photo(R.drawable.discount2));
+        list.add(new Photo(R.drawable.discount3));
+        return list;
     }
     public void showUserInformation(){
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
