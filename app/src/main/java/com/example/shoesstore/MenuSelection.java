@@ -65,6 +65,8 @@ public class MenuSelection extends AppCompatActivity {
 
         //setTransformer (animation page)
         viewPager2.setPageTransformer(new ZoomOutTransformer());
+        //disable swipe to change view (tat cai chuc nang vuot man hinh)
+        viewPager2.setUserInputEnabled(false);
         //show icon on nav when transform page
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override

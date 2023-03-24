@@ -43,6 +43,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
     //authentication (for user)
     implementation 'com.google.firebase:firebase-auth'
+    //database
+    implementation 'com.google.firebase:firebase-database'
     //glide: load image from url
     implementation 'com.github.bumptech.glide:glide:4.15.0'
     //circle view
@@ -51,4 +53,8 @@ dependencies {
     implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
     //imagePicker
     implementation 'com.github.dhaval2404:imagepicker:2.1'
+    //CircleIndicator
+    implementation 'me.relex:circleindicator:2.1.6'
+
+
 }
