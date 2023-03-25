@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
@@ -20,10 +22,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.shoesstore.R;
 import com.example.shoesstore.Signin;
+import com.example.shoesstore.adapter.CategoryAdapter;
 import com.example.shoesstore.adapter.ImageSlideHomeAdapter;
+import com.example.shoesstore.models.Category;
 import com.example.shoesstore.models.Photo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +50,12 @@ public class Home extends Fragment {
     private CircleIndicator3 mCircleIndicator3;
     private List<Photo> mListPhoto;
     private Handler mHandler=new Handler();
-    private Runnable mRunnable=new Runnable() {
-        @Override
-        public void run() {
-            if(mViewPager2.getCurrentItem()==mListPhoto.size()-1){
-                mViewPager2.setCurrentItem(0);
-            }
-            else{
-                mViewPager2.setCurrentItem(mViewPager2.getCurrentItem()+1);
-            }
-        }
-    };
+    private Runnable mRunnable;
+    //Category recyclerview
+    RecyclerView catRecyclerview;
+    CategoryAdapter categoryAdapter;
+    List<Category> categoryList;
+
 
 
     public Home(){
@@ -66,6 +70,7 @@ public class Home extends Fragment {
         showUserInformation();
         initListener();
         controlImageSlide();
+        showCategory();
 
         return mView;
     }
@@ -111,12 +116,31 @@ public class Home extends Fragment {
         tvEmail=mView.findViewById(R.id.tvEmail);
         btnSignOut=mView.findViewById(R.id.btnSignOut);
         //slideNewImages
+        mRunnable=new Runnable() {
+            @Override
+            public void run() {
+                if(mViewPager2.getCurrentItem()==mListPhoto.size()-1){
+                    mViewPager2.setCurrentItem(0);
+                }
+                else{
+                    mViewPager2.setCurrentItem(mViewPager2.getCurrentItem()+1);
+                }
+            }
+        };
         mViewPager2=mView.findViewById(R.id.view_pager2);
         mCircleIndicator3=mView.findViewById(R.id.circle_indicator3);
         mListPhoto=getListPhoto();
         ImageSlideHomeAdapter adapter=new ImageSlideHomeAdapter(mListPhoto);
         mViewPager2.setAdapter(adapter);
         mCircleIndicator3.setViewPager(mViewPager2);
+        //CatImage
+        catRecyclerview=mView.findViewById(R.id.rec_category);
+        catRecyclerview.setHasFixedSize(true);
+        catRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
+        categoryList=new ArrayList<>(); //nguon
+        categoryAdapter=new CategoryAdapter(getContext(),categoryList); //set nguon va man hinh hien thi cho adapter
+        catRecyclerview.setAdapter(categoryAdapter);
+
 
     }
 
@@ -148,6 +172,25 @@ public class Home extends Fragment {
         list.add(new Photo(R.drawable.discount2));
         list.add(new Photo(R.drawable.discount3));
         return list;
+    }
+    private void showCategory(){
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("CatImages");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+                    Category category=dataSnapshot.getValue(Category.class);
+                    categoryList.add(category);
+                }
+                categoryAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
     public void showUserInformation(){
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
