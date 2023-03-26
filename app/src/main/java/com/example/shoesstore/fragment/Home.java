@@ -1,11 +1,13 @@
 package com.example.shoesstore.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +51,9 @@ public class Home extends Fragment {
     private ImageView imgAvatar;
     private TextView tvUserName, tvEmail;
     private Button btnSignOut;
+    //dialog for loading
+    ProgressDialog progressDialog;
+    ConstraintLayout constraintLayout;
     //Home
     private ViewPager2 mViewPager2;
     private CircleIndicator3 mCircleIndicator3;
@@ -65,6 +70,7 @@ public class Home extends Fragment {
     List<Product> productList;
 
 
+
     public Home(){
 
     }
@@ -73,10 +79,20 @@ public class Home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView=inflater.inflate(R.layout.fragment_home,container,false);
+        progressDialog=new ProgressDialog(getActivity());
         initUI();
         showUserInformation();
         initListener();
+        //hide home layout
+        constraintLayout.setVisibility(View.GONE);
+        //news
         controlImageSlide();
+        //control dialog
+        progressDialog.setTitle("Welcome to my Store");
+        progressDialog.setMessage("PLease wait....");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        //load info
         showCategory();
         showProduct();
 
@@ -123,6 +139,7 @@ public class Home extends Fragment {
         tvUserName=mView.findViewById(R.id.tvUserName);
         tvEmail=mView.findViewById(R.id.tvEmail);
         btnSignOut=mView.findViewById(R.id.btnSignOut);
+        constraintLayout=mView.findViewById(R.id.mainHomeLayout);
         //slideNewImages
         mRunnable=new Runnable() {
             @Override
@@ -268,6 +285,9 @@ public class Home extends Fragment {
                     productList.add(product);
                 }
                 productAdapter.notifyDataSetChanged();
+                //show home layout and close dialog
+                constraintLayout.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
             }
 
             @Override
