@@ -15,4 +15,6 @@
     <color name="countBackGround">#F45E0B</color>
     <color name="circleColor">#fff</color>
     <color name="backGroundBottom">#04E1F8</color>
+
+    <color name="productItem">#FAEBD7</color>
 </resources>
