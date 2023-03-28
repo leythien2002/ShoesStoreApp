@@ -1,10 +1,13 @@
 package com.example.shoesstore.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,13 +24,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoesstore.R;
+import com.example.shoesstore.ShowAllProduct;
 import com.example.shoesstore.Signin;
 import com.example.shoesstore.adapter.CategoryAdapter;
 import com.example.shoesstore.adapter.ImageSlideHomeAdapter;
+import com.example.shoesstore.adapter.ProductAdapter;
 import com.example.shoesstore.models.Category;
 import com.example.shoesstore.models.Photo;
+import com.example.shoesstore.models.Product;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +52,9 @@ public class Home extends Fragment {
     private ImageView imgAvatar;
     private TextView tvUserName, tvEmail;
     private Button btnSignOut;
+    //dialog for loading
+    ProgressDialog progressDialog;
+    ConstraintLayout constraintLayout;
     //Home
     private ViewPager2 mViewPager2;
     private CircleIndicator3 mCircleIndicator3;
@@ -55,6 +65,12 @@ public class Home extends Fragment {
     RecyclerView catRecyclerview;
     CategoryAdapter categoryAdapter;
     List<Category> categoryList;
+    //Product Recyclerview
+    RecyclerView productRecyclerView;
+    ProductAdapter productAdapter;
+    List<Product> productList;
+    //viewAll button
+    TextView catShowAll,popularShowAll;
 
 
 
@@ -66,11 +82,22 @@ public class Home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView=inflater.inflate(R.layout.fragment_home,container,false);
+        progressDialog=new ProgressDialog(getActivity());
         initUI();
         showUserInformation();
         initListener();
+        //hide home layout
+        constraintLayout.setVisibility(View.GONE);
+        //news
         controlImageSlide();
+        //control dialog
+        progressDialog.setTitle("Welcome to my Store");
+        progressDialog.setMessage("PLease wait....");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        //load info
         showCategory();
+        showProduct();
 
         return mView;
     }
@@ -106,6 +133,20 @@ public class Home extends Fragment {
 
             }
         });
+        catShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(getContext(), ShowAllProduct.class);
+                startActivity(i);
+            }
+        });
+        popularShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(getContext(), ShowAllProduct.class);
+                startActivity(i);
+            }
+        });
 
     }
 
@@ -114,6 +155,10 @@ public class Home extends Fragment {
         tvUserName=mView.findViewById(R.id.tvUserName);
         tvEmail=mView.findViewById(R.id.tvEmail);
         btnSignOut=mView.findViewById(R.id.btnSignOut);
+        constraintLayout=mView.findViewById(R.id.mainHomeLayout);
+        //see All
+        catShowAll=mView.findViewById(R.id.category_see_all);
+        popularShowAll=mView.findViewById(R.id.popular_see_all);
         //slideNewImages
         mRunnable=new Runnable() {
             @Override
@@ -139,6 +184,14 @@ public class Home extends Fragment {
         categoryList=new ArrayList<>(); //nguon
         categoryAdapter=new CategoryAdapter(getContext(),categoryList); //set nguon va man hinh hien thi cho adapter
         catRecyclerview.setAdapter(categoryAdapter);
+        //Product
+        productRecyclerView=mView.findViewById(R.id.recProduct);
+        productRecyclerView.setHasFixedSize(true);
+        productRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
+        productList=new ArrayList<>();
+        productAdapter=new ProductAdapter(getContext(),productList);
+        productRecyclerView.setAdapter(productAdapter);
+
 
 
     }
@@ -174,14 +227,123 @@ public class Home extends Fragment {
     }
     private void showCategory(){
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("CatImages");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+//                    Category category=dataSnapshot.getValue(Category.class);
+//                    categoryList.add(category);
+//                }
+//                categoryAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    Category category=dataSnapshot.getValue(Category.class);
-                    categoryList.add(category);
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Category cat=snapshot.getValue(Category.class);
+                if(cat!=null){
+                    categoryList.add(cat);
                 }
                 categoryAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Category cat=snapshot.getValue(Category.class);
+                if(cat ==null||categoryList==null||categoryList.isEmpty()){
+                    return;
+                }
+                for (int i=0;i<categoryList.size();i++){
+                    //dua vao name de thay doi image.
+                    if(cat.getName()==categoryList.get(i).getName()){
+                        categoryList.set(i,cat);
+                    }
+                }
+                categoryAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                Category cat=snapshot.getValue(Category.class);
+                if(cat ==null||categoryList==null||categoryList.isEmpty()){
+                    return;
+                }
+                for (int i=0;i<categoryList.size();i++){
+                    //dua vao name de thay doi image.
+                    if(cat.getName()==categoryList.get(i).getName()){
+                        categoryList.remove(i);
+                        break;
+                    }
+                }
+                categoryAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+    private void showProduct(){
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Products");
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Product product=snapshot.getValue(Product.class);
+                if(product!=null){
+                    productList.add(product);
+                }
+                productAdapter.notifyDataSetChanged();
+                //show home layout and close dialog
+                constraintLayout.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Product product=snapshot.getValue(Product.class);
+                if(product ==null||productList==null||productList.isEmpty()){
+                    return;
+                }
+                for (int i=0;i<productList.size();i++){
+                    //dua vao name de thay doi image.
+                    if(product.getId()==productList.get(i).getId()){
+                        productList.set(i,product);
+                    }
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                Product product=snapshot.getValue(Product.class);
+                if(product ==null||productList==null||productList.isEmpty()){
+                    return;
+                }
+                for (int i=0;i<productList.size();i++){
+                    //dua vao name de thay doi image.
+                    if(product.getId()==productList.get(i).getId()){
+                        productList.remove(i);
+                        break;
+                    }
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
             }
 
             @Override
