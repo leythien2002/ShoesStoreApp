@@ -1,11 +1,22 @@
 package com.example.shoesstore.models;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private int id;
     private String imageUrl;
     private String name;
     private String description;
     private Double price;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public int getId() {
         return id;
@@ -55,5 +66,14 @@ public class Product {
         this.name = name;
         this.description = description;
         this.price = price;
+    }
+
+    public Product(int id, String imageUrl, String name, String description, Double price, String type) {
+        this.id = id;
+        this.imageUrl = imageUrl;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.type = type;
     }
 }

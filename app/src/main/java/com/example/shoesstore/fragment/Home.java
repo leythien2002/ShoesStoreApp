@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoesstore.R;
+import com.example.shoesstore.ShowAllProduct;
 import com.example.shoesstore.Signin;
 import com.example.shoesstore.adapter.CategoryAdapter;
 import com.example.shoesstore.adapter.ImageSlideHomeAdapter;
@@ -68,6 +69,8 @@ public class Home extends Fragment {
     RecyclerView productRecyclerView;
     ProductAdapter productAdapter;
     List<Product> productList;
+    //viewAll button
+    TextView catShowAll,popularShowAll;
 
 
 
@@ -131,6 +134,20 @@ public class Home extends Fragment {
 
             }
         });
+        catShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(getContext(), ShowAllProduct.class);
+                startActivity(i);
+            }
+        });
+        popularShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(getContext(), ShowAllProduct.class);
+                startActivity(i);
+            }
+        });
 
     }
 
@@ -140,6 +157,9 @@ public class Home extends Fragment {
         tvEmail=mView.findViewById(R.id.tvEmail);
         btnSignOut=mView.findViewById(R.id.btnSignOut);
         constraintLayout=mView.findViewById(R.id.mainHomeLayout);
+        //see All
+        catShowAll=mView.findViewById(R.id.category_see_all);
+        popularShowAll=mView.findViewById(R.id.popular_see_all);
         //slideNewImages
         mRunnable=new Runnable() {
             @Override
@@ -172,6 +192,7 @@ public class Home extends Fragment {
         productList=new ArrayList<>();
         productAdapter=new ProductAdapter(getContext(),productList);
         productRecyclerView.setAdapter(productAdapter);
+
 
 
     }
