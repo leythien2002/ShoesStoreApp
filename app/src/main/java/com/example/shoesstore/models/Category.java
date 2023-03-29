@@ -3,8 +3,23 @@ package com.example.shoesstore.models;
 public class Category {
     private String imageUrl;
     private String name;
+    private String type;
 
     public Category() {
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Category(String imageUrl, String name, String type) {
+        this.imageUrl = imageUrl;
+        this.name = name;
+        this.type = type;
     }
 
     public String getImageUrl() {

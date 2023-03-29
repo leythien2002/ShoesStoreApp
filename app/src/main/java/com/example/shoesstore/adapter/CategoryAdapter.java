@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoesstore.R;
+import com.example.shoesstore.ShowAllProduct;
 import com.example.shoesstore.models.Category;
 
 import java.util.List;
@@ -36,6 +38,16 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Glide.with(context).load(listCat.get(position).getImageUrl()).into(holder.catImg);
         holder.catName.setText(listCat.get(position).getName());
+
+        int id=holder.getAdapterPosition();
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(context, ShowAllProduct.class);
+                i.putExtra("type",listCat.get(id).getType());
+                context.startActivity(i);
+            }
+        });
     }
 
     @Override

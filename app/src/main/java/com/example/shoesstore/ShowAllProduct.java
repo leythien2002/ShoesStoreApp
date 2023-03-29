@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +28,20 @@ public class ShowAllProduct extends AppCompatActivity {
     ShowAllProductAdapter showAllProductAdapter;
     List<Product> productList;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_all_product);
         initUI();
-        showAllProduct();
+        String type=getIntent().getStringExtra("type");
+        if(type!=null){
+            showProductIntoCategory(type);
+        }
+        else{
+            showAllProduct();
+        }
+
     }
     private void initUI(){
         recyclerView=findViewById(R.id.recShowAllProduct);
@@ -41,6 +50,41 @@ public class ShowAllProduct extends AppCompatActivity {
         productList=new ArrayList<>();
         showAllProductAdapter=new ShowAllProductAdapter(this,productList);
         recyclerView.setAdapter(showAllProductAdapter);
+    }
+    private void showProductIntoCategory(String type){
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Products");
+        Query query=databaseReference.orderByChild("type").equalTo(type);
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Product product=snapshot.getValue(Product.class);
+                if(product!=null){
+                    productList.add(product);
+                }
+                showAllProductAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
     private void showAllProduct(){
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Products");
