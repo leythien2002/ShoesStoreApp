@@ -31,7 +31,7 @@ import kotlin.jvm.functions.Function1;
 public class MenuSelection extends AppCompatActivity {
 
     private final int ID_HOME=1;
-    private final int ID_MESSAGE=2;
+    private final int ID_CART=2;
     private final int ID_NOTIFICATION=3;
     private final int ID_ACCOUNT=4;
 
@@ -77,6 +77,9 @@ public class MenuSelection extends AppCompatActivity {
                         bottomNavigation.show(1,true);
                         break;
                     case 1:
+                        bottomNavigation.show(2,true);
+                        break;
+                    case 2:
                         bottomNavigation.show(4,true);
                         break;
                     default:
@@ -89,7 +92,7 @@ public class MenuSelection extends AppCompatActivity {
 
     private void initNavBar() {
         bottomNavigation.add(new MeowBottomNavigation.Model(ID_HOME,R.drawable.ic_nav_home));
-//        bottomNavigation.add(new MeowBottomNavigation.Model(ID_MESSAGE,R.drawable.ic_nav_home));
+        bottomNavigation.add(new MeowBottomNavigation.Model(ID_CART,R.drawable.ic_nav_home));
 //        bottomNavigation.add(new MeowBottomNavigation.Model(ID_NOTIFICATION,R.drawable.ic_nav_home));
         bottomNavigation.add(new MeowBottomNavigation.Model(ID_ACCOUNT,R.drawable.ic_nav_home));
 
@@ -98,6 +101,8 @@ public class MenuSelection extends AppCompatActivity {
             public Unit invoke(MeowBottomNavigation.Model model) {
                 switch (model.getId()){
                     case ID_HOME:
+                        break;
+                    case ID_CART:
                         break;
 //                    case ID_MESSAGE:
 //                        break;
@@ -117,12 +122,13 @@ public class MenuSelection extends AppCompatActivity {
                     case ID_HOME:
                         viewPager2.setCurrentItem(0);
                         break;
-//                    case ID_MESSAGE:
-//                        break;
+                    case ID_CART:
+                        viewPager2.setCurrentItem(1);
+                        break;
 //                    case ID_NOTIFICATION:
 //                        break;
                     case ID_ACCOUNT:
-                        viewPager2.setCurrentItem(1);
+                        viewPager2.setCurrentItem(2);
                         break;
                 }
                 return null;
