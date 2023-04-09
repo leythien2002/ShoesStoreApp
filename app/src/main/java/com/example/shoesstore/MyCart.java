@@ -1,25 +1,19 @@
-package com.example.shoesstore.fragment;
-
-import android.os.Bundle;
+package com.example.shoesstore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.shoesstore.R;
 import com.example.shoesstore.adapter.CartAdapter;
-import com.example.shoesstore.adapter.ShowAllProductAdapter;
-import com.example.shoesstore.models.Category;
 import com.example.shoesstore.models.ItemsCart;
-import com.example.shoesstore.models.Product;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -31,39 +25,35 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cart extends Fragment implements CartAdapter.SendTotalPrice {
-    private View mView;
+public class MyCart extends AppCompatActivity implements CartAdapter.SendTotalPrice{
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
     List<ItemsCart> cartList;
     private TextView tvTotalPrice;
     private Button btnCheckOut;
-
-    public Cart() {
-
-    }
-
-
+    Toolbar toolbar;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mView=inflater.inflate(R.layout.fragment_cart2,container,false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_cart);
         initUi();
         showListItems();
-
-        return mView;
     }
     private void initUi(){
-        tvTotalPrice=mView.findViewById(R.id.tvTotalPrice);
-        btnCheckOut=mView.findViewById(R.id.btnCheckOut);
-        recyclerView=mView.findViewById(R.id.rec_ShowMyCart);
+        tvTotalPrice=findViewById(R.id.tvTotalPrice);
+        btnCheckOut=findViewById(R.id.btnCheckOut);
+        recyclerView=findViewById(R.id.rec_ShowMyCart);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(MyCart.this,RecyclerView.VERTICAL,false));
         //Cart
         cartList=new ArrayList<>();
-        cartAdapter=new CartAdapter(getContext(),cartList,this);
+        cartAdapter=new CartAdapter(MyCart.this,cartList,this);
         recyclerView.setAdapter(cartAdapter);
+        //toolbar
+        toolbar=findViewById(R.id.tb_cart);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
     private void initListener(){
 
@@ -117,5 +107,12 @@ public class Cart extends Fragment implements CartAdapter.SendTotalPrice {
     @Override
     public void setTotalPrice(Double a){
         tvTotalPrice.setText("$ "+String.valueOf(a));
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

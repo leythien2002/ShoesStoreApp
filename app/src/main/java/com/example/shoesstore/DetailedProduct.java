@@ -41,6 +41,7 @@ public class DetailedProduct extends AppCompatActivity {
     private int totalQuantity=1;
     private Double currProductPrice;
     private int productId;
+    private String imgUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,13 +120,7 @@ public class DetailedProduct extends AppCompatActivity {
 //
 //
         HashMap<String,Object> cartMap=new HashMap<>();
-//
-//        cartMap.put("productName",name.getText().toString());
-//        cartMap.put("productPrice",currProductPrice);
-//        cartMap.put("totalQuantity",quantity.getText().toString());
-//        cartMap.put("totalPrice",price.getText().toString());
-//        cartMap.put("currentDate",saveCurrentDate);
-//        cartMap.put("currentTime",saveCurrentTime);
+
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Cart/"+id);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -149,6 +144,7 @@ public class DetailedProduct extends AppCompatActivity {
                        cartMap.put("productPrice",currProductPrice);
                        cartMap.put("totalQuantity",totalQuantity);
                        cartMap.put("totalPrice",totalQuantity*currProductPrice);
+                       cartMap.put("imgUrl",imgUrl);
                        cartMap.put("currentDate",saveCurrentDate);
                        cartMap.put("currentTime",saveCurrentTime);
                        databaseReference.child(String.valueOf(productId)).setValue(cartMap);
@@ -226,6 +222,7 @@ public class DetailedProduct extends AppCompatActivity {
             description.setText(product.getDescription());
             price.setText("$ "+String.valueOf(product.getPrice()));
             //get current Product value--> to calculate total Price
+            imgUrl=product.getImageUrl();
             currProductPrice=product.getPrice();
             productId=product.getId();
         }

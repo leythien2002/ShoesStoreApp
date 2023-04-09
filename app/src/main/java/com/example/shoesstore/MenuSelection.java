@@ -5,16 +5,25 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.AttributeSet;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
@@ -22,6 +31,14 @@ import com.example.shoesstore.adapter.MyViewPagerAdapter;
 import com.example.shoesstore.fragment.Home;
 import com.example.shoesstore.fragment.UserProfile;
 import com.example.shoesstore.tranformer.ZoomOutTransformer;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 
@@ -42,6 +59,13 @@ public class MenuSelection extends AppCompatActivity {
 
     //test fragment
     final private UserProfile userProfile=new UserProfile();
+    //toolbar
+    Toolbar toolbar;
+    //notification badge
+    private View menuView;
+    private TextView badge;
+    private RelativeLayout cartLayout;
+    public static int total=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +80,10 @@ public class MenuSelection extends AppCompatActivity {
         initUI();
 
 
+
     }
+
+
 
     private void initUI() {
 
@@ -88,6 +115,67 @@ public class MenuSelection extends AppCompatActivity {
                 }
             }
         });
+
+        toolbar=findViewById(R.id.tb_menu);
+        setSupportActionBar(toolbar);
+
+
+
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_nav_home); dung de add icon o dau toolbar
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+       getMenuInflater().inflate(R.menu.home_menu,menu);
+       menuView=menu.findItem(R.id.menu_cart).getActionView();
+       badge=menuView.findViewById(R.id.badge);
+       cartLayout=menuView.findViewById(R.id.cart_layout);
+       getQuantityInCart();
+       updateCartCount();
+
+       MenuItem menuItem=menu.findItem(R.id.menu_cart);
+       cartLayout.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               onOptionsItemSelected(menuItem);
+           }
+       });
+       return true;
+
+    }
+
+    private void updateCartCount() {
+        if(badge==null){
+            return;
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getQuantityInCart();
+                if(total==0){
+                    badge.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    badge.setVisibility(View.VISIBLE);
+                    badge.setText(String.valueOf(total));
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id=item.getItemId();
+        if(id==R.id.menu_cart){
+            updateCartCount();
+            startActivity(new Intent(MenuSelection.this,MyCart.class));
+
+        }
+        return true;
     }
 
     private void initNavBar() {
@@ -121,14 +209,17 @@ public class MenuSelection extends AppCompatActivity {
                 switch (model.getId()){
                     case ID_HOME:
                         viewPager2.setCurrentItem(0);
+                        toolbar.setTitle("Home");
                         break;
                     case ID_CART:
                         viewPager2.setCurrentItem(1);
+                        toolbar.setTitle("Cart");
                         break;
 //                    case ID_NOTIFICATION:
 //                        break;
                     case ID_ACCOUNT:
                         viewPager2.setCurrentItem(2);
+                        toolbar.setTitle("Account");
                         break;
                 }
                 return null;
@@ -136,10 +227,27 @@ public class MenuSelection extends AppCompatActivity {
         });
     }
 
+    private void getQuantityInCart(){
+
+        FirebaseUser mAuth= FirebaseAuth.getInstance().getCurrentUser();
+        String id=mAuth.getUid();
+        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                total= (int) snapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
 
 
-
-//    @Override
+    //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 //        if(requestCode==MY_REQUEST_CODE){

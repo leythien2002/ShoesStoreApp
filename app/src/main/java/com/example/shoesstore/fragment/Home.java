@@ -99,6 +99,7 @@ public class Home extends Fragment {
         showCategory();
         showProduct();
 
+
         return mView;
     }
 
