@@ -1,6 +1,7 @@
 package com.example.shoesstore.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.shoesstore.DetailedProduct;
 import com.example.shoesstore.R;
 import com.example.shoesstore.models.Product;
 
@@ -37,6 +39,16 @@ public class ShowAllProductAdapter extends RecyclerView.Adapter<ShowAllProductAd
         Glide.with(context).load(listProduct.get(position).getImageUrl()).into(holder.productImg);
         holder.productName.setText(listProduct.get(position).getName());
         holder.productPrice.setText("$ "+listProduct.get(position).getPrice().toString());
+        //show detail
+        int id=holder.getAdapterPosition();
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(context, DetailedProduct.class);
+                i.putExtra("detail",listProduct.get(id));
+                context.startActivity(i);
+            }
+        });
     }
 
     @Override

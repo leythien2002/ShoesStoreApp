@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ShoesStore"
         tools:targetApi="31">
         <activity
+            android:name=".MyCart"
+            android:exported="false" />
+        <activity
             android:name=".ShowAllProduct"
             android:exported="false" />
         <activity

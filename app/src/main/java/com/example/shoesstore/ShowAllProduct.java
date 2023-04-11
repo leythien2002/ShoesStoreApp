@@ -47,6 +47,7 @@ public class ShowAllProduct extends AppCompatActivity {
         recyclerView=findViewById(R.id.recShowAllProduct);
         GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setHasFixedSize(true);
         productList=new ArrayList<>();
         showAllProductAdapter=new ShowAllProductAdapter(this,productList);
         recyclerView.setAdapter(showAllProductAdapter);
@@ -62,6 +63,7 @@ public class ShowAllProduct extends AppCompatActivity {
                     productList.add(product);
                 }
                 showAllProductAdapter.notifyDataSetChanged();
+
             }
 
             @Override

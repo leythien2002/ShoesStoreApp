@@ -7,11 +7,18 @@
     android:background="#fff"
     tools:context=".MenuSelection">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tb_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNav"/>
+        android:layout_above="@+id/bottomNav"
+        android:layout_below="@+id/tb_menu" />
     <com.etebarian.meowbottomnavigation.MeowBottomNavigation
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
