@@ -25,19 +25,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyCart extends AppCompatActivity implements CartAdapter.SendTotalPrice{
+public class MyCart extends AppCompatActivity {
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
     List<ItemsCart> cartList;
     private TextView tvTotalPrice;
     private Button btnCheckOut;
     Toolbar toolbar;
+    private int totalPriceOfCart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_cart);
         initUi();
         showListItems();
+
     }
     private void initUi(){
         tvTotalPrice=findViewById(R.id.tvTotalPrice);
@@ -47,7 +49,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.SendTotalPr
         recyclerView.setLayoutManager(new LinearLayoutManager(MyCart.this,RecyclerView.VERTICAL,false));
         //Cart
         cartList=new ArrayList<>();
-        cartAdapter=new CartAdapter(MyCart.this,cartList,this);
+        cartAdapter=new CartAdapter(MyCart.this,cartList);
         recyclerView.setAdapter(cartAdapter);
         //toolbar
         toolbar=findViewById(R.id.tb_cart);
@@ -62,12 +64,16 @@ public class MyCart extends AppCompatActivity implements CartAdapter.SendTotalPr
         FirebaseUser mAuth= FirebaseAuth.getInstance().getCurrentUser();
         String id=mAuth.getUid();
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
+
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 ItemsCart item=snapshot.getValue(ItemsCart.class);
                 if(item!=null){
                     cartList.add(item);
+                    //set TotalPrice for MyCart page
+                    totalPriceOfCart+=item.getTotalPrice();
+                    tvTotalPrice.setText("$ "+String.valueOf(totalPriceOfCart));
 
                 }
                 cartAdapter.notifyDataSetChanged();
@@ -104,10 +110,10 @@ public class MyCart extends AppCompatActivity implements CartAdapter.SendTotalPr
             }
         });
     }
-    @Override
-    public void setTotalPrice(Double a){
-        tvTotalPrice.setText("$ "+String.valueOf(a));
-    }
+//    @Override
+//    public void setTotalPrice(Double a){
+//        tvTotalPrice.setText("$ "+String.valueOf(a));
+//    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home){

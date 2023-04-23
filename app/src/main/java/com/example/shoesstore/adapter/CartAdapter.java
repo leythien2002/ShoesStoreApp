@@ -20,19 +20,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     private Context context;
     private List<ItemsCart> listItems;
     private Double totalCost=0.0;
-    SendTotalPrice sendData;
+//    SendTotalPrice sendData;
 
-    public CartAdapter(Context context, List<ItemsCart> listItems,SendTotalPrice sendData) {
+    public CartAdapter(Context context, List<ItemsCart> listItems) {
         this.context = context;
         this.listItems = listItems;
-        this.sendData=sendData;
+//        this.sendData=sendData;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.items_cart,parent,false);
-        return new ViewHolder(view,sendData);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         holder.productTotalPrice.setText("$ "+listItems.get(position).getTotalPrice());
         holder.quantity.setText(String.valueOf(listItems.get(position).getTotalQuantity()));
         //send Total Price in Cart
-        totalCost+=listItems.get(position).getTotalPrice();
-        sendData.setTotalPrice(totalCost);
+//        totalCost+=listItems.get(position).getTotalPrice();
+//        sendData.setTotalPrice(totalCost);
 
 
     }
@@ -58,18 +58,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         ImageView productImg;
         TextView productName,quantity;
         TextView productTotalPrice;
-        SendTotalPrice sendTotalPrice;
+//        SendTotalPrice sendTotalPrice;
 
-        public ViewHolder(@NonNull View itemView, SendTotalPrice sendData) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.sendTotalPrice=sendData;
+//            this.sendTotalPrice=sendData;
             productImg=itemView.findViewById(R.id.imgProduct);
             productName=itemView.findViewById(R.id.tvProductName);
             productTotalPrice=itemView.findViewById(R.id.tvProducTotalPrice);
             quantity=itemView.findViewById(R.id.tvQuantityProduct);
         }
     }
-    public interface SendTotalPrice{
-        void setTotalPrice(Double a);
-    }
+//    public interface SendTotalPrice{
+//        void setTotalPrice(Double a);
+//    }
+
 }

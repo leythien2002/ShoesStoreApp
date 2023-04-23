@@ -32,16 +32,17 @@ import java.util.List;
 import java.util.logging.SimpleFormatter;
 
 public class DetailedProduct extends AppCompatActivity {
-    ImageView imgDetail,imgPlus,imgMinus;
-    TextView name,description,price,quantity;
+    ImageView imgDetail, imgPlus, imgMinus;
+    TextView name, description, price, quantity;
     RatingBar rating;
     Button btnAddToCart;
     Toolbar toolbar;
-    private Product product=null;
-    private int totalQuantity=1;
+    private Product product = null;
+    private int totalQuantity = 1;
     private Double currProductPrice;
     private int productId;
     private String imgUrl;
+    private boolean checkItemAlreadyHad = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,27 +55,26 @@ public class DetailedProduct extends AppCompatActivity {
 
     }
 
-    private void initUI(){
-        imgDetail=findViewById(R.id.imgProduct);
-        rating=findViewById(R.id.rbRating);
-        name=findViewById(R.id.tvProductName);
-        description=findViewById(R.id.tvContextOfDescription);
-        price=findViewById(R.id.tvTotalPrice);
-        quantity=findViewById(R.id.tvQuantityProduct);
+    private void initUI() {
+        imgDetail = findViewById(R.id.imgProduct);
+        rating = findViewById(R.id.rbRating);
+        name = findViewById(R.id.tvProductName);
+        description = findViewById(R.id.tvContextOfDescription);
+        price = findViewById(R.id.tvTotalPrice);
+        quantity = findViewById(R.id.tvQuantityProduct);
         //button
-        btnAddToCart=findViewById(R.id.btnAddToCart);
-        imgPlus=findViewById(R.id.imgPlus);
-        imgMinus=findViewById(R.id.imgMinus);
+        btnAddToCart = findViewById(R.id.btnAddToCart);
+        imgPlus = findViewById(R.id.imgPlus);
+        imgMinus = findViewById(R.id.imgMinus);
         //toolbar
-        toolbar=findViewById(R.id.toolbarDetail);
+        toolbar = findViewById(R.id.toolbarDetail);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
 
-
-    private void initListener(){
+    private void initListener() {
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,11 +84,11 @@ public class DetailedProduct extends AppCompatActivity {
         imgPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(totalQuantity<10){
+                if (totalQuantity < 10) {
                     totalQuantity++;
                     quantity.setText(String.valueOf(totalQuantity));
-                    if(product!=null){
-                        price.setText("$ "+String.valueOf(currProductPrice*totalQuantity));
+                    if (product != null) {
+                        price.setText("$ " + String.valueOf(currProductPrice * totalQuantity));
                     }
 
                 }
@@ -98,61 +98,62 @@ public class DetailedProduct extends AppCompatActivity {
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(totalQuantity>1){
+                if (totalQuantity > 1) {
                     totalQuantity--;
                     quantity.setText(String.valueOf(totalQuantity));
-                    if(product!=null) {
+                    if (product != null) {
                         price.setText("$ " + String.valueOf(currProductPrice * totalQuantity));
                     }
                 }
             }
         });
     }
-    private void addToCart2(){
-        FirebaseUser mAuth=FirebaseAuth.getInstance().getCurrentUser();
-        String id=mAuth.getUid();
-        String saveCurrentTime,saveCurrentDate;
-        Calendar calendar= Calendar.getInstance();
-        SimpleDateFormat currentDate=new SimpleDateFormat("MM dd, yyyy");
-        saveCurrentDate=currentDate.format(calendar.getTime());
-        SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm:ss a");
-        saveCurrentTime=currentTime.format(calendar.getTime());
-//
-//
-        HashMap<String,Object> cartMap=new HashMap<>();
 
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Cart/"+id);
+    private void addToCart2() {
+        FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
+        String id = mAuth.getUid();
+        String saveCurrentTime, saveCurrentDate;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MM dd, yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+//
+//
+        HashMap<String, Object> cartMap = new HashMap<>();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Cart/" + id);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data: snapshot.getChildren()){
-                   String idProduct=data.getKey();//id of product on firebase
-                   if(idProduct.equals(String.valueOf(productId))){
-                       int number=data.child("totalQuantity").getValue(Integer.class);
-                       Double totalCost=(number+totalQuantity)*currProductPrice;
-                       cartMap.put("totalQuantity",number+totalQuantity);
-                       cartMap.put("totalPrice",totalCost);
-                       cartMap.put("currentDate",saveCurrentDate);
-                       cartMap.put("currentTime",saveCurrentTime);
-                       databaseReference.child(idProduct).updateChildren(cartMap);
-                       Toast.makeText(DetailedProduct.this,idProduct,Toast.LENGTH_LONG).show();
-                       return;
-                   }
-                   else{
-                       cartMap.put("id",productId);
-                       cartMap.put("productName",name.getText().toString());
-                       cartMap.put("productPrice",currProductPrice);
-                       cartMap.put("totalQuantity",totalQuantity);
-                       cartMap.put("totalPrice",totalQuantity*currProductPrice);
-                       cartMap.put("imgUrl",imgUrl);
-                       cartMap.put("currentDate",saveCurrentDate);
-                       cartMap.put("currentTime",saveCurrentTime);
-                       databaseReference.child(String.valueOf(productId)).setValue(cartMap);
-                       Toast.makeText(DetailedProduct.this,"Add cai moi",Toast.LENGTH_LONG).show();
-                       return;
-                   }
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String idProduct = data.getKey();//id of product on firebase
+                    if (idProduct.equals(String.valueOf(productId))) {
+                        checkItemAlreadyHad = true;
+                        int number = data.child("totalQuantity").getValue(Integer.class);
+                        Double totalCost = (number + totalQuantity) * currProductPrice;
+                        cartMap.put("totalQuantity", number + totalQuantity);
+                        cartMap.put("totalPrice", totalCost);
+                        cartMap.put("currentDate", saveCurrentDate);
+                        cartMap.put("currentTime", saveCurrentTime);
+                        databaseReference.child(idProduct).updateChildren(cartMap);
+                        Toast.makeText(DetailedProduct.this, idProduct, Toast.LENGTH_LONG).show();
+                    }
+                }
+                if (checkItemAlreadyHad == false) {
+                    cartMap.put("id", productId);
+                    cartMap.put("productName", name.getText().toString());
+                    cartMap.put("productPrice", currProductPrice);
+                    cartMap.put("totalQuantity", totalQuantity);
+                    cartMap.put("totalPrice", totalQuantity * currProductPrice);
+                    cartMap.put("imgUrl", imgUrl);
+                    cartMap.put("currentDate", saveCurrentDate);
+                    cartMap.put("currentTime", saveCurrentTime);
+                    databaseReference.child(String.valueOf(productId)).setValue(cartMap);
+                    Toast.makeText(DetailedProduct.this, "Add cai moi", Toast.LENGTH_LONG).show();
 
                 }
+                checkItemAlreadyHad=false;
             }
 
             @Override
@@ -160,6 +161,8 @@ public class DetailedProduct extends AppCompatActivity {
 
             }
         });
+
+
 //        Query query=databaseReference.orderByChild("id").equalTo(productId);
 //        query.addListenerForSingleValueEvent(new ValueEventListener() {
 //            @Override
@@ -182,55 +185,56 @@ public class DetailedProduct extends AppCompatActivity {
 
     private void addToCart() {
         List<Product> list;
-        String saveCurrentTime,saveCurrentDate;
-        Calendar calendar= Calendar.getInstance();
-        SimpleDateFormat currentDate=new SimpleDateFormat("MM dd, yyyy");
-        saveCurrentDate=currentDate.format(calendar.getTime());
-        SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm:ss a");
-        saveCurrentTime=currentTime.format(calendar.getTime());
+        String saveCurrentTime, saveCurrentDate;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MM dd, yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        saveCurrentTime = currentTime.format(calendar.getTime());
 
 
-        HashMap<String,Object> cartMap=new HashMap<>();
+        HashMap<String, Object> cartMap = new HashMap<>();
 
-        cartMap.put("productName",name.getText().toString());
-        cartMap.put("productPrice",currProductPrice);
-        cartMap.put("totalQuantity",quantity.getText().toString());
-        cartMap.put("totalPrice",price.getText().toString());
-        cartMap.put("currentDate",saveCurrentDate);
-        cartMap.put("currentTime",saveCurrentTime);
-        FirebaseUser mAuth=FirebaseAuth.getInstance().getCurrentUser();
-        String id=mAuth.getUid();
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Cart/"+id);
+        cartMap.put("productName", name.getText().toString());
+        cartMap.put("productPrice", currProductPrice);
+        cartMap.put("totalQuantity", quantity.getText().toString());
+        cartMap.put("totalPrice", price.getText().toString());
+        cartMap.put("currentDate", saveCurrentDate);
+        cartMap.put("currentTime", saveCurrentTime);
+        FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
+        String id = mAuth.getUid();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Cart/" + id);
         databaseReference.setValue(cartMap, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                Toast.makeText(DetailedProduct.this,"Add Completed",Toast.LENGTH_LONG).show();
+                Toast.makeText(DetailedProduct.this, "Add Completed", Toast.LENGTH_LONG).show();
             }
         });
 
 
     }
 
-    private void showDetailProduct(){
-        Object obj=getIntent().getSerializableExtra("detail");
-        if(obj instanceof Product){
-            product= (Product) obj;
+    private void showDetailProduct() {
+        Object obj = getIntent().getSerializableExtra("detail");
+        if (obj instanceof Product) {
+            product = (Product) obj;
         }
-        if(product!=null){
+        if (product != null) {
             Glide.with(getApplicationContext()).load(product.getImageUrl()).into(imgDetail);
             name.setText(product.getName());
             description.setText(product.getDescription());
-            price.setText("$ "+String.valueOf(product.getPrice()));
+            price.setText("$ " + String.valueOf(product.getPrice()));
             //get current Product value--> to calculate total Price
-            imgUrl=product.getImageUrl();
-            currProductPrice=product.getPrice();
-            productId=product.getId();
+            imgUrl = product.getImageUrl();
+            currProductPrice = product.getPrice();
+            productId = product.getId();
         }
     }
+
     //handle back event on toolbar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);

@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.shoesstore.adapter.MyViewPagerAdapter;
@@ -66,6 +67,8 @@ public class MenuSelection extends AppCompatActivity {
     private TextView badge;
     private RelativeLayout cartLayout;
     public static int total=0;
+    //runnable support for counting items in cart
+    private Runnable mRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +78,7 @@ public class MenuSelection extends AppCompatActivity {
         bottomNavigation=findViewById(R.id.bottomNav);
         //push view up when keyboard appears
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
+        getQuantityInCart();
         initNavBar();
         initUI();
 
@@ -118,6 +121,22 @@ public class MenuSelection extends AppCompatActivity {
 
         toolbar=findViewById(R.id.tb_menu);
         setSupportActionBar(toolbar);
+//        mRunnable=new Runnable() {
+//            @Override
+//            public void run() {
+//                if(badge==null){
+//                    return;
+//                }
+//                getQuantityInCart();
+//                if(total==0){
+//                    badge.setVisibility(View.INVISIBLE);
+//                }
+//                else{
+//                    badge.setVisibility(View.VISIBLE);
+//                    badge.setText(String.valueOf(total));
+//                }
+//            }
+//        };
 
 
 
@@ -134,8 +153,8 @@ public class MenuSelection extends AppCompatActivity {
        menuView=menu.findItem(R.id.menu_cart).getActionView();
        badge=menuView.findViewById(R.id.badge);
        cartLayout=menuView.findViewById(R.id.cart_layout);
-       getQuantityInCart();
-       updateCartCount();
+
+//       updateCartCount();
 
        MenuItem menuItem=menu.findItem(R.id.menu_cart);
        cartLayout.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +163,8 @@ public class MenuSelection extends AppCompatActivity {
                onOptionsItemSelected(menuItem);
            }
        });
+        Toast.makeText(this, "dang hoat dong", Toast.LENGTH_SHORT).show();
+
        return true;
 
     }
@@ -156,13 +177,13 @@ public class MenuSelection extends AppCompatActivity {
             @Override
             public void run() {
                 getQuantityInCart();
-                if(total==0){
-                    badge.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    badge.setVisibility(View.VISIBLE);
-                    badge.setText(String.valueOf(total));
-                }
+//                if(total==0){
+//                    badge.setVisibility(View.INVISIBLE);
+//                }
+//                else{
+//                    badge.setVisibility(View.VISIBLE);
+//                    badge.setText(String.valueOf(total));
+//                }
             }
         });
     }
@@ -171,7 +192,7 @@ public class MenuSelection extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id=item.getItemId();
         if(id==R.id.menu_cart){
-            updateCartCount();
+//            updateCartCount();
             startActivity(new Intent(MenuSelection.this,MyCart.class));
 
         }
@@ -236,6 +257,13 @@ public class MenuSelection extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 total= (int) snapshot.getChildrenCount();
+                if(total==0){
+                    badge.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    badge.setVisibility(View.VISIBLE);
+                    badge.setText(String.valueOf(total));
+                }
             }
 
             @Override
@@ -246,7 +274,11 @@ public class MenuSelection extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onStart() {
+//        updateCartCount();
+        super.onStart();
+    }
     //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
