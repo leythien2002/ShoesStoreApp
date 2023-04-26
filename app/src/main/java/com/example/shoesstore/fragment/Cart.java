@@ -31,7 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cart extends Fragment implements CartAdapter.SendTotalPrice {
+public class Cart extends Fragment  {
     private View mView;
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
@@ -62,7 +62,7 @@ public class Cart extends Fragment implements CartAdapter.SendTotalPrice {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false));
         //Cart
         cartList=new ArrayList<>();
-        cartAdapter=new CartAdapter(getContext(),cartList,this);
+        cartAdapter=new CartAdapter(getContext(),cartList);
         recyclerView.setAdapter(cartAdapter);
     }
     private void initListener(){
@@ -114,8 +114,8 @@ public class Cart extends Fragment implements CartAdapter.SendTotalPrice {
             }
         });
     }
-    @Override
-    public void setTotalPrice(Double a){
-        tvTotalPrice.setText("$ "+String.valueOf(a));
-    }
+//    @Override
+//    public void setTotalPrice(Double a){
+//        tvTotalPrice.setText("$ "+String.valueOf(a));
+//    }
 }
