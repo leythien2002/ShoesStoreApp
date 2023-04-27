@@ -4,9 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -32,11 +37,26 @@ public class MyCart extends AppCompatActivity {
     private TextView tvTotalPrice;
     private Button btnCheckOut;
     Toolbar toolbar;
-    private int totalPriceOfCart;
+    private int totalPriceOfCart,checkChange;
+    //Receiver totalPrice from CartAdapter when change quantity in cart
+    private BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle=intent.getExtras();
+            if(bundle==null){
+                return;
+            }
+            else{
+                checkChange= (int) bundle.get("checkChange");
+            }
+
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_cart);
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,new IntentFilter("send_totalPrice"));
         initUi();
         showListItems();
 
@@ -85,12 +105,20 @@ public class MyCart extends AppCompatActivity {
                 if(cat ==null||cartList==null||cartList.isEmpty()){
                     return;
                 }
+
                 for (int i=0;i<cartList.size();i++){
                     //dua vao name de thay doi image.
                     if(cat.getId()==cartList.get(i).getId()){
                         cartList.set(i,cat);
+                        if(checkChange==1){
+                            totalPriceOfCart+=cat.getProductPrice();
+                        }
+                        else{
+                            totalPriceOfCart-=cat.getProductPrice();
+                        }
                     }
                 }
+                tvTotalPrice.setText("$ "+String.valueOf(totalPriceOfCart));
                 cartAdapter.notifyDataSetChanged();
             }
 
