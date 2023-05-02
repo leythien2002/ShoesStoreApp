@@ -55,7 +55,10 @@ dependencies {
     implementation 'com.github.dhaval2404:imagepicker:2.1'
     //CircleIndicator
     implementation 'me.relex:circleindicator:2.1.6'
-    //Notification the quantity of products in cart
+    //Swipe to delete item in cart
+    implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+    //bottom sheet
+    implementation 'com.google.android.material:material:1.2.1'
 
 
 

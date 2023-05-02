@@ -14,11 +14,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.shoesstore.adapter.CartAdapter;
 import com.example.shoesstore.models.ItemsCart;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -26,11 +28,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyCart extends AppCompatActivity {
+    private FirebaseUser mAuth;
+    private DatabaseReference databaseReference;
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
     List<ItemsCart> cartList;
@@ -38,6 +43,7 @@ public class MyCart extends AppCompatActivity {
     private Button btnCheckOut;
     Toolbar toolbar;
     private int totalPriceOfCart,checkChange;
+    private ItemsCart itemsCart;
     //Receiver totalPrice from CartAdapter when change quantity in cart
     private BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
         @Override
@@ -47,7 +53,11 @@ public class MyCart extends AppCompatActivity {
                 return;
             }
             else{
+                itemsCart= (ItemsCart) bundle.get("ItemCart");
                 checkChange= (int) bundle.get("checkChange");
+            }
+            if(itemsCart!=null){
+                openSheetDialog();
             }
 
         }
@@ -80,10 +90,32 @@ public class MyCart extends AppCompatActivity {
     private void initListener(){
 
     }
+    private void openSheetDialog() {
+        View viewDialog=getLayoutInflater().inflate(R.layout.bottom_sheet_confirm_delete,null);
+        BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(viewDialog);
+        bottomSheetDialog.show();
+//        bottomSheetDialog.setCancelable(false);//dung de chan nguoi dung tat dialog nay di (= scroll/ click ra ngoai...)
+        Button btnCancel=viewDialog.findViewById(R.id.btnCancel);
+        Button btnRemove=viewDialog.findViewById(R.id.btnRemove);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+        btnRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeItem();
+                bottomSheetDialog.dismiss();
+            }
+        });
+    }
     private void showListItems(){
-        FirebaseUser mAuth= FirebaseAuth.getInstance().getCurrentUser();
+        mAuth= FirebaseAuth.getInstance().getCurrentUser();
         String id=mAuth.getUid();
-        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
+        databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
 
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -113,7 +145,7 @@ public class MyCart extends AppCompatActivity {
                         if(checkChange==1){
                             totalPriceOfCart+=cat.getProductPrice();
                         }
-                        else{
+                        if(checkChange==0){
                             totalPriceOfCart-=cat.getProductPrice();
                         }
                     }
@@ -142,6 +174,32 @@ public class MyCart extends AppCompatActivity {
 //    public void setTotalPrice(Double a){
 //        tvTotalPrice.setText("$ "+String.valueOf(a));
 //    }
+    //remove item from cart
+    private void removeItem(){
+        mAuth = FirebaseAuth.getInstance().getCurrentUser();
+        String id = mAuth.getUid();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Cart/" + id);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String idProduct = data.getKey();//id of product on firebase
+                    if (idProduct.equals(String.valueOf(itemsCart.getId()))) {
+                        cartList.remove(itemsCart);
+                        totalPriceOfCart-=itemsCart.getTotalPrice();
+                        tvTotalPrice.setText("$ "+String.valueOf(totalPriceOfCart));
+                    }
+
+                }
+                cartAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home){

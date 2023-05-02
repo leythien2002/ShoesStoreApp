@@ -1,6 +1,8 @@
 package com.example.shoesstore.models;
 
-public class ItemsCart {
+import java.io.Serializable;
+
+public class ItemsCart implements Serializable {
     private String currentDate,currentTime;
     private int id,productPrice,totalQuantity;
     private Double totalPrice;

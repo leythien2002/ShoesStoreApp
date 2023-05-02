@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,9 +17,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.chauthai.swipereveallayout.SwipeRevealLayout;
+import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.example.shoesstore.DetailedProduct;
 import com.example.shoesstore.R;
 import com.example.shoesstore.models.ItemsCart;
+import com.example.shoesstore.models.Product;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +41,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     private FirebaseUser mAuth;
     private DatabaseReference databaseReference;
 //    SendTotalPrice sendData;
+    //swipe to delete item
+    private ViewBinderHelper viewBinderHelper=new ViewBinderHelper();
+
 
     public CartAdapter(Context context, List<ItemsCart> listItems) {
         this.context = context;
@@ -46,12 +54,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.items_cart,parent,false);
+        //items_cart: not use swipe to delete # items_cart2: use swipe to delete
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.items_cart2,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        viewBinderHelper.bind(holder.swipeRevealLayout,String.valueOf(listItems.get(position).getId()));
+
         Glide.with(context).load(listItems.get(position).getImgUrl()).into(holder.productImg);
         holder.productName.setText(listItems.get(position).getProductName());
         holder.productTotalPrice.setText("$ "+listItems.get(position).getTotalPrice());
@@ -74,10 +85,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
 
             }
         });
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ItemsCart item=listItems.get(index);
+                sendTotalCartToCartActivivty(2,item);
+            }
+        });
 
 
 
     }
+
+
 
     private void handleEventPlusAndMinus(int a,int position){
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
@@ -94,13 +114,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
                         if(a==0){
                             if(number>1){
                                 number--;
-                                sendTotalCartToCartActivivty(0);
+                                sendTotalCartToCartActivivty(0,null);
                             }
                         }
                         else{
                             //how to determine the limit of number when increased ?
                             number++;
-                            sendTotalCartToCartActivivty(1);
+                            sendTotalCartToCartActivivty(1,null);
                         }
                         Double totalCost = Double.valueOf(number * listItems.get(position).getProductPrice());
                         cartMap.put("totalQuantity", number);
@@ -118,10 +138,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
             }
         });
     }
-    private void sendTotalCartToCartActivivty(int a){
+    private void sendTotalCartToCartActivivty(int a,ItemsCart b){
         Intent i=new Intent("send_totalPrice");
         Bundle bundle=new Bundle();
         bundle.putInt("checkChange",a);
+        if(b!=null){
+            bundle.putSerializable("ItemCart",b);
+        }
         i.putExtras(bundle);
         LocalBroadcastManager.getInstance(context).sendBroadcast(i);
 
@@ -138,6 +161,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         TextView productTotalPrice;
         ImageView btnMinus,btnPlus;
 //        SendTotalPrice sendTotalPrice;
+        //swipe to delete items
+        private SwipeRevealLayout swipeRevealLayout;
+        private LinearLayout layoutDelete;
+        private Button btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -148,6 +175,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
             quantity=itemView.findViewById(R.id.tvQuantityProduct);
             btnMinus=itemView.findViewById(R.id.imgMinus);
             btnPlus=itemView.findViewById(R.id.imgPlus);
+            //swipe to delete
+            swipeRevealLayout=itemView.findViewById(R.id.swipeLayout);
+            layoutDelete=itemView.findViewById(R.id.layoutDelete);
+            btnDelete=itemView.findViewById(R.id.btnDelete);
         }
     }
 //    public interface SendTotalPrice{
