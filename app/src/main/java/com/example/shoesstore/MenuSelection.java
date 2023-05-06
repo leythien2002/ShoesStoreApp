@@ -82,8 +82,6 @@ public class MenuSelection extends AppCompatActivity {
         initNavBar();
         initUI();
 
-
-
     }
 
 
@@ -121,24 +119,6 @@ public class MenuSelection extends AppCompatActivity {
 
         toolbar=findViewById(R.id.tb_menu);
         setSupportActionBar(toolbar);
-//        mRunnable=new Runnable() {
-//            @Override
-//            public void run() {
-//                if(badge==null){
-//                    return;
-//                }
-//                getQuantityInCart();
-//                if(total==0){
-//                    badge.setVisibility(View.INVISIBLE);
-//                }
-//                else{
-//                    badge.setVisibility(View.VISIBLE);
-//                    badge.setText(String.valueOf(total));
-//                }
-//            }
-//        };
-
-
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_nav_home); dung de add icon o dau toolbar
@@ -167,25 +147,6 @@ public class MenuSelection extends AppCompatActivity {
 
        return true;
 
-    }
-
-    private void updateCartCount() {
-        if(badge==null){
-            return;
-        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getQuantityInCart();
-//                if(total==0){
-//                    badge.setVisibility(View.INVISIBLE);
-//                }
-//                else{
-//                    badge.setVisibility(View.VISIBLE);
-//                    badge.setText(String.valueOf(total));
-//                }
-            }
-        });
     }
 
     @Override
@@ -257,6 +218,8 @@ public class MenuSelection extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 total= (int) snapshot.getChildrenCount();
+                //set quantity having in cart
+                //because of this way, updateCount function(with runable) no longer useful.
                 if(total==0){
                     badge.setVisibility(View.INVISIBLE);
                 }
@@ -279,6 +242,25 @@ public class MenuSelection extends AppCompatActivity {
 //        updateCartCount();
         super.onStart();
     }
+    private void updateCartCount() {
+        if(badge==null){
+            return;
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getQuantityInCart();
+//                if(total==0){
+//                    badge.setVisibility(View.INVISIBLE);
+//                }
+//                else{
+//                    badge.setVisibility(View.VISIBLE);
+//                    badge.setText(String.valueOf(total));
+//                }
+            }
+        });
+    }
+
     //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -288,4 +270,5 @@ public class MenuSelection extends AppCompatActivity {
 //            }
 //        }
 //    }
+
 }
