@@ -55,11 +55,11 @@
                 android:text="Name"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/tvProducTotalPrice"
+                app:layout_constraintBottom_toTopOf="@+id/tvProducPrice"
                 app:layout_constraintStart_toEndOf="@+id/imgProduct" />
 
             <TextView
-                android:id="@+id/tvProducTotalPrice"
+                android:id="@+id/tvProducPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -70,57 +70,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imgProduct" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="120dp"
+            <TextView
+                android:id="@+id/tvQuantityProduct"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="144dp"
                 android:background="@drawable/grey_background"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.941"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.768">
-
-                <ImageView
-                    android:id="@+id/imgMinus"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="16dp"
-
-                    android:src="@drawable/minus"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.47" />
-
-                <ImageView
-                    android:id="@+id/imgPlus"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="20dp"
-                    android:src="@drawable/plus"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.428" />
-
-                <TextView
-                    android:id="@+id/tvQuantityProduct"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1"
-                    android:textSize="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imgPlus"
-                    app:layout_constraintStart_toEndOf="@+id/imgMinus"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:gravity="center"
+                android:text="1"
+                android:textSize="20dp"
+                app:layout_constraintStart_toEndOf="@+id/tvProducPrice"
+                app:layout_constraintTop_toTopOf="@+id/tvProducPrice" />
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
@@ -128,18 +90,19 @@
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="116dp"
+        android:layout_marginStart="52dp"
         android:text="Cancel"
         app:layout_constraintBottom_toBottomOf="@+id/btnRemove"
-        app:layout_constraintEnd_toStartOf="@+id/btnRemove" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
 
         android:id="@+id/btnRemove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
         android:layout_marginTop="20dp"
         android:text="Yes, Remove"
-        app:layout_constraintTop_toBottomOf="@+id/cardView4"
-        tools:layout_editor_absoluteX="265dp" />
+        app:layout_constraintStart_toEndOf="@+id/btnCancel"
+        app:layout_constraintTop_toBottomOf="@+id/cardView4" />
 </androidx.constraintlayout.widget.ConstraintLayout>

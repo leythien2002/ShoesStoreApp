@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.shoesstore.adapter.CartAdapter;
 import com.example.shoesstore.models.ItemsCart;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -68,6 +70,7 @@ public class MyCart extends AppCompatActivity {
         setContentView(R.layout.activity_my_cart);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,new IntentFilter("send_totalPrice"));
         initUi();
+        initListener();
         showListItems();
 
     }
@@ -88,13 +91,31 @@ public class MyCart extends AppCompatActivity {
 
     }
     private void initListener(){
-
+        btnCheckOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(MyCart.this,Checkout.class);
+                startActivity(i);
+            }
+        });
     }
     private void openSheetDialog() {
         View viewDialog=getLayoutInflater().inflate(R.layout.bottom_sheet_confirm_delete,null);
         BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(viewDialog);
         bottomSheetDialog.show();
+
+        ImageView img=viewDialog.findViewById(R.id.imgProduct);
+        TextView tvProductname,tvPrice,tvQuantity;
+        tvProductname=viewDialog.findViewById(R.id.tvProductName);
+        tvPrice=viewDialog.findViewById(R.id.tvProducPrice);
+        tvQuantity=viewDialog.findViewById(R.id.tvQuantityProduct);
+        Glide.with(this).load(itemsCart.getImgUrl()).into(img);
+        tvProductname.setText(itemsCart.getProductName());
+        tvPrice.setText("$"+String.valueOf(itemsCart.getProductPrice()));
+        tvQuantity.setText(String.valueOf(itemsCart.getTotalQuantity()));
+
+
 //        bottomSheetDialog.setCancelable(false);//dung de chan nguoi dung tat dialog nay di (= scroll/ click ra ngoai...)
         Button btnCancel=viewDialog.findViewById(R.id.btnCancel);
         Button btnRemove=viewDialog.findViewById(R.id.btnRemove);

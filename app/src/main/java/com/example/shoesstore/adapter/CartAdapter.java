@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,6 +41,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     private Double totalCost=0.0;
     private FirebaseUser mAuth;
     private DatabaseReference databaseReference;
+    private boolean checkOpenDeleteLayout;
 //    SendTotalPrice sendData;
     //swipe to delete item
     private ViewBinderHelper viewBinderHelper=new ViewBinderHelper();
@@ -62,6 +64,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         viewBinderHelper.bind(holder.swipeRevealLayout,String.valueOf(listItems.get(position).getId()));
+        viewBinderHelper.setOpenOnlyOne(true);
 
         Glide.with(context).load(listItems.get(position).getImgUrl()).into(holder.productImg);
         holder.productName.setText(listItems.get(position).getProductName());
@@ -151,7 +154,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     }
     @Override
     public int getItemCount() {
-        return listItems.size();
+        if(listItems!=null){
+            return listItems.size();
+        }
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

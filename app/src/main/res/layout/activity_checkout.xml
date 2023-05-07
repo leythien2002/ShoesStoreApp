@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Checkout"
+    >
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbCheckout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Checkout" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Shipping Address"
+                android:textSize="20dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="3dp"
+                    android:src="@drawable/ic_light_user"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="Delivery Address"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                    app:layout_constraintStart_toEndOf="@+id/imageView3" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="15dp"
+                    android:layout_height="27dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/line"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvUserName"
+                    app:layout_constraintStart_toEndOf="@+id/tvUserName" />
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Name"
+                    android:textSize="20dp"
+                    app:layout_constraintStart_toStartOf="@+id/textView11"
+                    app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+                <TextView
+                    android:id="@+id/tvUserPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Phone"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvUserName"
+                    app:layout_constraintStart_toEndOf="@+id/imageView4" />
+
+                <TextView
+                    android:id="@+id/tvUserAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Address"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="55dp"
+
+                    android:scrollHorizontally="false"
+                    android:inputType="textMultiLine"
+
+                    app:layout_constraintStart_toStartOf="@+id/tvUserName"
+                    app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
+
+                <ImageButton
+                    android:id="@+id/btnEditAdress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_nav_home"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+
+
+
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
